@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Document</title>
+    <style>
+
+      .pagination {
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            margin: 0 5px;
+            text-decoration: none;
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: 1px solid #007bff;
+        }
+
+        .pagination a:hover {
+            background-color: #0056b3;
+        }
+
+  
+  </style>
+</head>          
+
+<body>
+  <center><h1>User Data</h1></center>
+  <div class="table-responsive">
+    <table class="table table-success table-striped">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Address</th>
+          <th>City</th>
+          <th>Pincode</th>
+          <!-- <th>Password</th> -->
+          <th>TimeZone</th>
+          <th>TimeZone</th>
+        </tr>  
+      </thead>
+      <tbody>
+        <%if (data.length >0){ %>
+          <% data.forEach(function(item){ %>
+          <tr>
+            <td><%= item._id %></td>
+            <td><%= item.name %></td>
+            <td><%= item.email %></td>
+            <td><%= item.address %></td>
+            <td><%= item.city %></td>
+            <td><%= item.pincode %></td>
+            <!-- <td><%= item.password %></td> -->
+            <td><%= item.createdAt %></td>
+            <td><%= item.updatedAt %></td>
+          </tr>
+          <% })}else{ %>
+            <tr>
+                <td colspan="6">No Record Found</td>
+            </tr>
+            <% } %>
+      </tbody>
+    
+    </table>
+    <div class="pagination d-flex justify-content-end">
+      <% if (currentPage > 1) { %>
+          <a href="?page=<%= currentPage - 1 %>" class="pagination-link">Previous</a>
+      <% } %>
+  
+      <% for (let page = 1; page <= totalPages; page++) { %>
+          <a href="?page=<%= page %>" class="<%= currentPage === page ? 'active' : 'pagination-link' %>"><%= page %></a>
+      <% } %>
+  
+      <% if (currentPage < totalPages) { %>
+          <a href="?page=<%= currentPage + 1 %>" class="pagination-link">Next</a>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html> 
+

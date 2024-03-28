@@ -1,0 +1,1469 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Blog Platform Swagger",
+    "version": "1.0.0",
+    "description": "This is a sample server blog platform Swagger. You can access the Swagger JSON at [http://localhost:5000/swagger.json](http://localhost:5000/swagger.json)"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000"
+    }
+  ],
+  "paths": {
+    "/signup": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Register a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "pincode": {
+                    "type": "number"
+                  },
+                  "phoneNumber": {
+                    "type": "number"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User registered successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "Success",
+                  "message": "Registration Successfully....",
+                  "data": {
+                    "name": "mukesh",
+                    "email": "mukesh@gmail.com",
+                    "address": "55, keval park, punagam",
+                    "city": "surat",
+                    "pincode": 395010,
+                    "phoneNumber": 987653211,
+                    "password": 123
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User registration failed due to conflict (duplicate name or email)",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "user_exists_name": {
+                    "value": {
+                      "Status": "FAILED",
+                      "message": "Name already Exits..!"
+                    }
+                  },
+                  "user_exists_email": {
+                    "value": {
+                      "Status": "FAILED",
+                      "message": "Email already Exits..!"
+                    }
+                  },
+                  "user_exists_both": {
+                    "value": {
+                      "Status": "FAILED",
+                      "message": "Name and Email already Exits..!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "User login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "Success",
+                  "message": "Login Successfully..!",
+                  "data": {
+                    "_id": 12345,
+                    "name": "mukesh",
+                    "email": "mukesh@gmail.com",
+                    "address": "55, keval park, punagam",
+                    "city": "surat",
+                    "pincode": 395010,
+                    "phoneNumber": 987653211,
+                    "password": 123,
+                    "tokens": "jwt.token.here"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid password",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "Invalid Password"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "Invalid Email"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "ERROR",
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "User logout",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "Bearer <token>"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Logout successful",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "user_logout": {
+                    "value": {
+                      "Status": "Success",
+                      "message": "User logout successfully"
+                    }
+                  },
+                  "user_already_logout": {
+                    "value": {
+                      "Status": "FAILED",
+                      "message": "User already logged out"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "Unauthorized. User not found."
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "ERROR",
+                  "message": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pageinfo": {
+      "get": {
+        "summary": "Get paginated user list",
+        "description": "Retrieve a paginated list of users based on specified filters.",
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "description": "Filter users by name (case-insensitive)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "email",
+            "description": "Filter users by email (case-insensitive)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "address",
+            "description": "Filter users by address (case-insensitive)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response containing paginated user list",
+            "content": {
+              "application/json": {
+                "example": {
+                  "page": 1,
+                  "totalPostes": 1,
+                  "totalPages": 1,
+                  "postes": {
+                    "_id": 12345,
+                    "name": "mukesh",
+                    "email": "mukesh@gmail.com",
+                    "address": "55, keval park, punagam",
+                    "city": "surat",
+                    "pincode": 395010,
+                    "phoneNumber": 987653211,
+                    "password": 123
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blog": {
+      "post": {
+        "summary": "Add a new blog",
+        "description": "Add a new blog to the system.",
+        "tags": [
+          "Blog"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "userName",
+            "description": "Username of the blog author",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "title",
+            "description": "Title of the blog",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "content",
+            "description": "Content of the blog",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "description": "Status of the blog",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "image",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "binary"
+            }
+          },
+          {
+            "in": "query",
+            "name": "password",
+            "description": "Password for the blog",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Blog added successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "Success",
+                  "message": "Registration Successfully....",
+                  "data": {
+                    "userName": "blog",
+                    "title": "blog post",
+                    "content": "This is the content of the blog post",
+                    "status": "published",
+                    "images": "image_91692340829860.jpg",
+                    "password": 123
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Blog already exists",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "Blog already exists"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get list of blog posts",
+        "description": "Retrieve a list of blog posts based on the specified type.",
+        "tags": [
+          "Blog"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "type",
+            "description": "Type of blog posts (published/draft)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "published",
+                "draft"
+              ]
+            }
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "Bearer <token>"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response containing blog posts",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "published": {
+                    "value": {
+                      "userName": "blog",
+                      "title": "blog post",
+                      "content": "This is the content of the blog post",
+                      "status": "published",
+                      "images": "image_91692340829860.jpg",
+                      "password": 123
+                    }
+                  },
+                  "draft": {
+                    "value": {
+                      "userName": "blog",
+                      "title": "blog post",
+                      "content": "This is the content of the blog post",
+                      "status": "draft",
+                      "images": "image_91692340829860.jpg",
+                      "password": 123
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No posts found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "No posts found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "ERROR",
+                  "error": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a blog",
+        "description": "Update an existing blog.",
+        "tags": [
+          "Blog"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Blog update data",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userName": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "content": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Blog updated successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "Success",
+                  "message": "Blog Upload....!"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Blog not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "Blog does not exist"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "ERROR",
+                  "error": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a blog",
+        "description": "Delete an existing blog.",
+        "tags": [
+          "Blog"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "Bearer <token>"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Blog deleted successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "Success",
+                  "message": "Blog Record Deleted Successfully"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Blog Does Not Exist",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "Blog Does Not Exist"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "ERROR",
+                  "error": "Failed to delete blog record"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login/blog": {
+      "post": {
+        "summary": "Login to a blog",
+        "description": "Login to a blog using username and password.",
+        "tags": [
+          "Blog"
+        ],
+        "requestBody": {
+          "description": "Blog login credentials",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userName": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "Success",
+                  "message": "Login Successfully..!"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "Invalid Password"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Invalid username",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "Invalid UserName"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "ERROR",
+                  "error": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/postinfo": {
+      "get": {
+        "summary": "Get paginated blog list",
+        "description": "Retrieve a paginated list of blog based on specified filters.",
+        "tags": [
+          "Blog"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "userName",
+            "description": "Filter blog by name (case-insensitive)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "title",
+            "description": "Filter blog by title (case-insensitive)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "content",
+            "description": "Filter blog by content (case-insensitive)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response containing paginated user list",
+            "content": {
+              "application/json": {
+                "example": {
+                  "page": 1,
+                  "totalPostes": 1,
+                  "totalPages": 1,
+                  "postes": {
+                    "_id": 12345,
+                    "userName": "blog",
+                    "title": "blog post",
+                    "content": "This is the content of the blog post",
+                    "status": "published",
+                    "images": "image_91692340829860.jpg",
+                    "password": 123
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories": {
+      "post": {
+        "summary": "Add new categories",
+        "description": "Add new categories to the system.",
+        "tags": [
+          "Categories"
+        ],
+        "requestBody": {
+          "description": "Categories data",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "categories": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "companyName": {
+                    "type": "string"
+                  },
+                  "productName": {
+                    "type": "string"
+                  },
+                  "modelNumber": {
+                    "type": "string"
+                  },
+                  "size": {
+                    "type": "string"
+                  },
+                  "price": {
+                    "type": "number"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Categories added successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "Success",
+                  "message": "Categories Upload.....!",
+                  "data": {
+                    "name": "Path",
+                    "categories": "electronics",
+                    "companyName": "vivo",
+                    "productName": "tablets",
+                    "modelNumber": "LKI5874WE44D5",
+                    "size": "5.5 inch",
+                    "price": 22000,
+                    "password": 123
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Categories already exists",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "Categories already exists"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get list of categories",
+        "description": "Retrieve a list of categories.",
+        "tags": [
+          "Categories"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "Bearer <token>"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response containing categories list",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "Success",
+                  "CategoriesList": {
+                    "_id": "64c0e5faaed71535f108ed31",
+                    "name": "Path",
+                    "categories": "electronics",
+                    "companyName": "vivo",
+                    "productName": "tablets",
+                    "modelNumber": "LKI5874WE44D5",
+                    "size": "5.5 inch",
+                    "price": 22000,
+                    "password": 123
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "ERROR",
+                  "error": "Error retrieving categories list"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update categories",
+        "description": "Update existing categories.",
+        "tags": [
+          "Categories"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Updated categories data",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "categories": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "companyName": {
+                    "type": "string"
+                  },
+                  "productName": {
+                    "type": "string"
+                  },
+                  "modelNumber": {
+                    "type": "string"
+                  },
+                  "size": {
+                    "type": "string"
+                  },
+                  "price": {
+                    "type": "number"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Categories updated successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "Success",
+                  "message": "Categories Updated.....!"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categories not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "Categories is Exist"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "ERROR",
+                  "error": "Internal Server Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete categories",
+        "description": "Delete an existing categories.",
+        "tags": [
+          "Categories"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "Bearer <token>"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Categories deleted successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "Success",
+                  "message": "Categories Record Deleted Successfully"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Categories Does Not Exist",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "Categories Does Not Exist"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "ERROR",
+                  "error": "Failed to delete Categories record"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/logincategories": {
+      "post": {
+        "summary": "Login to categories",
+        "description": "Login to categories using name and password.",
+        "tags": [
+          "Categories"
+        ],
+        "requestBody": {
+          "description": "Categories login credentials",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "Success",
+                  "message": "Login Successfully....!",
+                  "data": {
+                    "_id": "64c0e5faaed71535f108ed31",
+                    "name": "Path",
+                    "categories": "electronics",
+                    "companyName": "vivo",
+                    "productName": "tablets",
+                    "modelNumber": "LKI5874WE44D5",
+                    "size": "5.5 inch",
+                    "price": 22000,
+                    "password": 123
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "Invalid name and password"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categories not found",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "User not found"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "ERROR",
+                  "error": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/postcategories": {
+      "get": {
+        "summary": "Get paginated categories list",
+        "description": "Retrieve a paginated list of categories based on specified filters.",
+        "tags": [
+          "Categories"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "description": "Page number",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "description": "Filter categories by name (case-insensitive)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "companyName",
+            "description": "Filter categories by companyName (case-insensitive)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "productName",
+            "description": "Filter categories by productName (case-insensitive)",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response containing paginated categories list",
+            "content": {
+              "application/json": {
+                "example": {
+                  "page": 1,
+                  "totalPostes": 1,
+                  "totalPages": 1,
+                  "postes": {
+                    "_id": "64c0e5faaed71535f108ed31",
+                    "name": "Path",
+                    "categories": "electronics",
+                    "companyName": "vivo",
+                    "productName": "tablets",
+                    "modelNumber": "LKI5874WE44D5",
+                    "size": "5.5 inch",
+                    "price": 22000,
+                    "password": 123
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "Internal server error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/searchblog": {
+      "get": {
+        "summary": "Search for a blog post by ID or title.",
+        "description": "Retrieve a blog post by either its ID or title.",
+        "tags": [
+          "Search"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the blog post."
+          },
+          {
+            "in": "query",
+            "name": "title",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The title of the blog post."
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "Bearer <token>"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with the found blog post.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "Success",
+                  "message": "Search Blog Successful Add....!",
+                  "data": {
+                    "_id": "64cccd9935528903d686f66c",
+                    "userName": "blog",
+                    "title": "blog post",
+                    "content": "This is the content of the blog post",
+                    "status": "published",
+                    "images": "image_91692340829860.jpg",
+                    "password": 123
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Blog post not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "Blog Not Found"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    },
+    "/searchcategories": {
+      "get": {
+        "summary": "Search for categories by ID or company name.",
+        "description": "Retrieve categories by either their ID or company name.",
+        "tags": [
+          "Search"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the category."
+          },
+          {
+            "in": "query",
+            "name": "companyName",
+            "schema": {
+              "type": "string"
+            },
+            "description": "The name of the company associated with the category."
+          },
+          {
+            "name": "Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "Bearer <token>"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response with the found categories.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "Success",
+                  "message": "Search categories Successful Add....!",
+                  "data": {
+                    "_id": "64c0e7a3aed71535f108ed34",
+                    "name": "Path",
+                    "categories": "electronics",
+                    "companyName": "vivo",
+                    "productName": "tablets",
+                    "modelNumber": "LKI5874WE44D5",
+                    "size": "5.5 inch",
+                    "price": 22000,
+                    "password": 123
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categories not found.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "Status": "FAILED",
+                  "message": "Categories Not Found"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {},
+  "tags": []
+}
